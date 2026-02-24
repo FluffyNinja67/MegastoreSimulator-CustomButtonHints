@@ -18,7 +18,7 @@ namespace CustomButtonHints
         /// <param name="actionName">Locale directory key</param>
         /// <param name="actionText">Text to display when added to the ButtonWindow</param>
         /// <param name="keyCode">KeyCode to use in the InputAction</param>
-        public static void AddCustomActions(string actionName, string actionText, KeyCode keyCode)
+        public static void AddCustomAction(string actionName, string actionText, KeyCode keyCode)
         {
             customActions.Add(new(actionName, actionText));
             customButtons.Add(keyCode);
@@ -27,14 +27,13 @@ namespace CustomButtonHints
         /// Adds a custom button to ButtonWindow redraws that matches given locale keys
         /// </summary>
         /// <param name="actionName">Locale directory key</param>
-        /// <param name="buttonNames">Locale keys already in the list of buttons to be added</param>
+        /// <param name="existingButtons">Locale keys already in the list of buttons to be added</param>
         /// <param name="functionCall">Function to call when key is pressed</param>
         /// <param name="exactMatch">Decides if the locale keys need to be an exact match, or if they just need to be included in the list</param>
-        /// <param name="conditionCheck">Not yet implemented</param>
-        public static void AddButtonToUI(string actionName, List<string> buttonNames, Action functionCall, bool exactMatch = true, bool conditionCheck = true)
+        public static void AddButtonToUI(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch = true)
         {
             StartKeyMap();
-            actionAdds.Add(new(actionName, buttonNames, functionCall, conditionCheck, exactMatch));
+            actionAdds.Add(new(actionName, existingButtons, functionCall, exactMatch));
         }
         /// <summary>
         /// Adds a custom button to the next ButtonWindow redraw regardless of content
@@ -81,7 +80,7 @@ namespace CustomButtonHints
             return buttonsToAdd.ContainsKey(myActionMap[actionName]);
         }
 
-        private static List<(string actionName, List<string> existingButtons, Action functionCall, bool conditionCheck, bool exactMatch)> actionAdds = [];
+        private static List<(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch)> actionAdds = [];
         private static List<(string actionName, string actionText)> customActions = [];
         private static List<KeyCode> customButtons = [];
         private static List<InputActionReference> boxActionRefs = new List<InputActionReference>();

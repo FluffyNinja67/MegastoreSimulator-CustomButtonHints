@@ -36,12 +36,12 @@ Right below your plugin info, like this
 
 ### Second, the functions that will be available to you:
 ```cs
-public static void AddCustomAction(string actionName, string actionText, KeyCode keyCode)
-public static void AddButtonToUI(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch = true)
-public static void AddButtonToUI(string actionName, Action functionCall)
-public static void RemoveButtonFromUI(string actionName)
-public static void OpenButtonWindow()
-public static void CloseButtonWindow()
+public static void AddCustomAction(string actionName, string actionText, KeyCode keyCode) //Adds a custom action for use
+public static void AddButtonToUI(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch = true) //Adds a custom action to the UI matching the given list of existing buttons
+public static void AddButtonToUI(string actionName, Action functionCall) //Forcefully adds a custom button to the UI
+public static void RemoveButtonFromUI(string actionName) //Makes sure a custom button is not added on the next redraw of the UI
+public static void OpenButtonWindow() //Forcefully opens the ButtonWindow, useful if you want it to be manually opened and not just if the game is opening it
+public static void CloseButtonWindow() //Forcefully closes the ButtonWindow, careful with this one. It can cause softlocks if used incorrectly
 ```
 
 ### Adding your actions to the game
@@ -58,7 +58,8 @@ When added to the UI, will look like this:
 ![Example](assets/CustomButtonExample.png)
 
 ### How to add them to the UI, and make them do something
-
+> [!NOTE]
+> It is completely YOUR responsibility to make sure you are adding and removing buttons properly
 
 
 

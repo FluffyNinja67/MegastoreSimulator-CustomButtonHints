@@ -20,7 +20,7 @@ Just follow these 3 easy steps:
 
 ### First off, make sure you set this mod's file as a dependency
  - Add my `CustomButtonHints.dll` as a project dependency to your project
- - You will need to add this either of these lines at the start of your mod's main Plugin.cs script
+ - You will need to add either of these lines at the start of your mod's main Plugin.cs script
 ```cs
 [BepInDependency("CustomButtonHints", BepInDependency.DependencyFlags.SoftDependency)]
 

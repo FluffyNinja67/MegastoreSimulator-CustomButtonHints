@@ -13,7 +13,7 @@
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
     <RootNamespace>CustomButtonHints</RootNamespace>
-    <Configurations>Steam</Configurations>
+    <Configurations>Steam;QuickInstall</Configurations>
 	  <GamePath>D:\Program Files (x86)\Steam\SteamApps\common\Megastore Simulator</GamePath>
 	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	  <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
@@ -38,33 +38,24 @@
 		<Reference Include="Assembly-CSharp" Publicize="true">
 			<HintPath>$(GamePath)\Megastore Simulator_Data\Managed\Assembly-CSharp.dll</HintPath>
 		</Reference>
-		<Reference Include="Assembly-CSharp-firstpass">
-			<HintPath>$(GamePath)\Megastore Simulator_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-		</Reference>
 		<Reference Include="Unity.InputSystem">
-		  <HintPath>D:\Program Files (x86)\Steam\SteamApps\common\Megastore Simulator\Megastore Simulator_Data\Managed\Unity.InputSystem.dll</HintPath>
+		  <HintPath>$(GamePath)\Megastore Simulator_Data\Managed\Unity.InputSystem.dll</HintPath>
 		</Reference>
 		<Reference Include="Unity.TextMeshPro">
-		  <HintPath>D:\Program Files (x86)\Steam\SteamApps\common\Megastore Simulator\Megastore Simulator_Data\Managed\Unity.TextMeshPro.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine">
-			<HintPath>$(GamePath)\Megastore Simulator_Data\Managed\UnityEngine.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine.CoreModule">
-			<HintPath>$(GamePath)\Megastore Simulator_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+		  <HintPath>$(GamePath)\Megastore Simulator_Data\Managed\Unity.TextMeshPro.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.IMGUIModule">
-		  <HintPath>D:\Program Files (x86)\Steam\SteamApps\common\Megastore Simulator\Megastore Simulator_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+		  <HintPath>$(GamePath)\Megastore Simulator_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.InputModule">
-		  <HintPath>D:\Program Files (x86)\Steam\SteamApps\common\Megastore Simulator\Megastore Simulator_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+		  <HintPath>$(GamePath)\Megastore Simulator_Data\Managed\UnityEngine.InputModule.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 	<Target Name="ZipBuild" AfterTargets="AfterBuild">
 		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(OutputPath)\zip\BepInEx\plugins\FluffyNinjaKitty\" />
 		<ZipDirectory SourceDirectory="$(OutputPath)\zip\" DestinationFile="$(OutDir)\..\$(RootNamespace).$(AssemblyVersion).zip" Overwrite="true" />
 	</Target>
-	<Target Name="CopyToGameFolder" AfterTargets="AfterBuild">
+	<Target Condition="'$(Configuration)'=='QuickInstall'" Name="CopyToGameFolder" AfterTargets="AfterBuild">
 		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)\BepInEx\plugins\FluffyNinjaKitty" />
 	</Target>
 </Project>

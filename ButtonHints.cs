@@ -31,10 +31,10 @@ namespace CustomButtonHints
         /// <param name="actionName">Locale directory key</param>
         /// <param name="actionText">Text to display when added to the ButtonWindow</param>
         /// <param name="keyCode">ConfigEntry for a KeyCode, NOT a KeyCode</param>
-        public static void AddCustomAction(string actionName, string actionText, ConfigEntry<KeyCode> keyCode)
+        public static void AddCustomAction(string actionName, string actionText, ConfigEntry<KeyCode> entry)
         {
             customActions.Add(new(actionName, actionText, true));
-            customConfigButtons.Add(keyCode);
+            customConfigButtons.Add(entry);
         }
         /// <summary>
         /// Adds a custom button to ButtonWindow redraws that matches given locale keys

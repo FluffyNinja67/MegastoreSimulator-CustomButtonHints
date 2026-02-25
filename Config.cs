@@ -1,13 +1,14 @@
 ﻿using BepInEx.Configuration;
+using UnityEngine;
 
 namespace CustomButtonHints
 {
     public class Config
     {
-        public ConfigEntry<bool> dummy;
+        public ConfigEntry<KeyCode> kRefreshInputs;
         public Config(ConfigFile cfg)
         {
-            dummy = cfg.Bind<bool>("dummy", "dummy", false, new ConfigDescription("dummy", null, new ConfigurationManagerAttributes { Order = 1, IsAdvanced = true }));
+            kRefreshInputs = cfg.Bind("dummy", "dummy", KeyCode.F10, new ConfigDescription("dummy", null, new ConfigurationManagerAttributes { Order = 1, IsAdvanced = true }));
         }
     }
 }

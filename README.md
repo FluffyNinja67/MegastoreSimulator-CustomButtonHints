@@ -38,9 +38,9 @@ Right below your plugin info, like this
 ```cs
 public static void AddCustomAction(string actionName, string actionText, KeyCode keyCode) //Adds a custom action for use
 public static void AddButtonToUI(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch = true) //Adds a custom action to the UI matching the given list of existing buttons
-public static void AddButtonToUI(string actionName, Action functionCall) //Forcefully adds a custom button to the UI
+public static void AddButtonToUI(string actionName, Action functionCall) //Forcefully adds a custom button to the UI on the next redraw
 public static void RemoveButtonFromUI(string actionName) //Makes sure a custom button is not added on the next redraw of the UI
-public static void OpenButtonWindow() //Forcefully opens the ButtonWindow, useful if you want it to be manually opened and not just if the game is opening it
+public static void OpenButtonWindow() //Forcefully opens and draws the ButtonWindow, useful if you want it to be manually opened
 public static void CloseButtonWindow() //Forcefully closes the ButtonWindow, careful with this one. It can cause softlocks if used incorrectly
 ```
 
@@ -61,7 +61,56 @@ When added to the UI, will look like this:
 > [!NOTE]
 > It is completely YOUR responsibility to make sure you are adding and removing buttons properly
 
+Using the same example above, you can add that action to the UI using either of the `AddButtonToUI()` functions
+```cs
+    ButtonHints.AddButtonToUI("myaction_name", ["pack", "set_price", "place_move"], delegate { ExampleFunction(); }, true);
+```
+This line tells the mod to add the action `myaction_name` to the UI if the actions `pack` `set_price` `place_move` are in the list.
 
+These are added by a function in the game when looking at a shelf with empty hands, using a tool like DnSpy, you can find these.
+
+This, for example, is the call adding them in `Shelf.OnMouseHoverStarted()`
+```cs
+SingletonBehaviour<ButtonsWindow>.Instance.RepaintWithKeyCodes(new Dictionary<KeyCode, ValueTuple<string, Action>>
+{
+    {
+        KeyCode.F,
+        new ValueTuple<string, Action>("pack", delegate
+        {
+            this.parentPlaceable.Pack();
+        })
+    },
+    {
+        KeyCode.T,
+        new ValueTuple<string, Action>("set_price", new Action(this.OnSetPrice))
+    },
+    {
+        KeyCode.Mouse1,
+        new ValueTuple<string, Action>("place_move", delegate
+        {
+            this.parentPlaceable.StartNewPlacement(null);
+        })
+    }
+}, base.transform, true);
+```
+This can be used to find updates to the UI based on what the game is already adding to it.
+
+A different way is using the other method for `AddButtonToUI()`
+```cs
+    AddButtonToUI("myaction_name", delegate { ExampleFunction(); });
+```
+This adds the button to a list of actions that will be added to the UI regardless of exsisting content next time it draws.
+
+Next is the `RemoveButtonFromUI()` function. It behaves similar to the second method of adding, where it adds it to a list to be removed. Making sure it does NOT draw on the next update to the UI
+```cs
+    RemoveButtonFromUI("myaction_name");
+```
+>[!NOTE]
+>Removing actions from the UI currently cannot remove vanilla buttons from the list
+
+The last two functions are straight forward, `OpenButtonWindow()` calls the function to open the UI using an empty list, and if you have added any using the `AddButtonToUI()` functions, they will be added.
+
+And `CloseButtonWindow()` closes the UI and clears all actions from the lists to add/remove actions
 
 ## Need help?
 

@@ -231,6 +231,7 @@ namespace CustomButtonHints
                 GameObject newButton = GameObject.Instantiate(GameObject.Find("UIButton"));
                 newButton.transform.parent = GameObject.Find("Canvas/ButtonsCanvasPC/Layout").transform;
                 newButton.transform.localPosition += new Vector3(0, 57f * __instance.buttons.Count, 0);
+                newButton.transform.localScale = new Vector3(0.85f, 0.85f, 0.85f);
                 __instance.buttons.Add(newButton.GetComponent<UIButton>());
                 __instance.pcUIs.Add(newButton.GetComponent<UIButton>());
                 __instance.pcUITexts.Add(GameObject.Find($"{newButton.name}/BG/Text").GetComponent<TextMeshProUGUI>());

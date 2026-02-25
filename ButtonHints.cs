@@ -1,4 +1,5 @@
-﻿using DFTGames.Localization;
+﻿using BepInEx.Configuration;
+using DFTGames.Localization;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -20,8 +21,20 @@ namespace CustomButtonHints
         /// <param name="keyCode">KeyCode to use in the InputAction</param>
         public static void AddCustomAction(string actionName, string actionText, KeyCode keyCode)
         {
-            customActions.Add(new(actionName, actionText));
+            customActions.Add(new(actionName, actionText, false));
             customButtons.Add(keyCode);
+        }
+        /// <summary>
+        ///      Adds texts to the games locale directory for displaying on the button window
+        ///      and generates InputActions for the KeyCodes
+        /// </summary>
+        /// <param name="actionName">Locale directory key</param>
+        /// <param name="actionText">Text to display when added to the ButtonWindow</param>
+        /// <param name="keyCode">ConfigEntry for a KeyCode, NOT a KeyCode</param>
+        public static void AddCustomAction(string actionName, string actionText, ConfigEntry<KeyCode> entry)
+        {
+            customActions.Add(new(actionName, actionText, true));
+            customConfigButtons.Add(entry);
         }
         /// <summary>
         /// Adds a custom button to ButtonWindow redraws that matches given locale keys
@@ -57,6 +70,14 @@ namespace CustomButtonHints
                 buttonsToAdd.Remove(myActionMap[actionName]);
         }
         /// <summary>
+        /// Removes vanilla buttons from UI redrawing, making sure it doesn't show on the next redraw
+        /// </summary>
+        public static void RemoveButtonFromUI(KeyCode keyCode)
+        {
+            if (!buttonsToRemove.Contains(InputManager.Instance.GetInputActionForKeyCode(keyCode)))
+                buttonsToRemove.Add(InputManager.Instance.GetInputActionForKeyCode(keyCode));
+        }
+        /// <summary>
         /// Calls the ButtonWindow to draw, useful if needing to draw custom buttons on functions that do not call it on their own
         /// </summary>
         public static void OpenButtonWindow()
@@ -70,21 +91,34 @@ namespace CustomButtonHints
         {
             ButtonsWindow.Instance.Close();
         }
+        /// <summary>
+        /// Clears all custom inputs and recollects
+        /// </summary>
+        public static void RefreshInputActions()
+        {
+            refreshInputs = true;
+            StartKeyMap();
+        }
         private static void StartKeyMap()
         {
             if (InputManager.Instance)
-                if (InputManager.Instance.keyCodeToActionMap == null) { InputManager.Instance.InitializeKeyCodeMap(); }
+                if (InputManager.Instance.keyCodeToActionMap == null || refreshInputs) { InputManager.Instance.InitializeKeyCodeMap(); }
         }
         private static bool CheckForAddedButton(string actionName)
         {
             return buttonsToAdd.ContainsKey(myActionMap[actionName]);
         }
+        private static bool refreshInputs = false;
 
         private static List<(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch)> actionAdds = [];
-        private static List<(string actionName, string actionText)> customActions = [];
+
+        private static List<(string actionName, string actionText, bool isConfigEntry)> customActions = [];
+
         private static List<KeyCode> customButtons = [];
-        private static List<InputActionReference> boxActionRefs = new List<InputActionReference>();
+        private static List<ConfigEntry<KeyCode>> customConfigButtons = [];
+        private static List<InputActionReference> buttonActionRefs = new List<InputActionReference>();
         private static Dictionary<string, InputActionReference> myActionMap = [];
+
         private static Dictionary<InputActionReference, (string actionName, Action functionCall)> buttonsToAdd = [];
         private static List<InputActionReference> buttonsToRemove = [];
 
@@ -177,11 +211,23 @@ namespace CustomButtonHints
             {
                 action.Disable();
             }
-            boxActionAsset.AddActionMap("Mods");
-            for (int i = 0; i < customButtons.Count; i++)
+            if (refreshInputs)
             {
-                Plugin.Logger.LogDebug($"Adding keycode {customButtons[i]}");
-                string keycode = customButtons[i].ToString().ToLower();
+                myActionMap.Clear();
+                buttonActionRefs.Clear();
+                refreshInputs = false;
+            }
+            else
+                boxActionAsset.AddActionMap("Mods");
+            int buttonIndx = 0;
+            int configEntryIndx = 0;
+            for (int i = 0; i < customActions.Count; i++)
+            {
+                KeyCode key = customActions[i].isConfigEntry ? customConfigButtons[configEntryIndx].Value : customButtons[buttonIndx];
+                if (customActions[i].isConfigEntry) configEntryIndx++; else buttonIndx++;
+
+                Plugin.Logger.LogDebug($"Adding keycode {key}");
+                string keycode = key.ToString().ToLower();
                 InputAction newAction;
                 if (keycode.Contains("keypad"))
                     keycode = keycode.Replace("keypad", "numpad");
@@ -190,12 +236,11 @@ namespace CustomButtonHints
                 catch { newAction = boxActionAsset.FindActionMap("Mods").FindAction($"Custom({keycode})"); }
                 newAction.AddBinding($"<Keyboard>/{keycode}", "", "", "KeyboardMouse");
                 Plugin.Logger.LogDebug("setting reference");
-                boxActionRefs.Add(InputActionReference.Create(newAction));
-                boxActionRefs.Last();
+                buttonActionRefs.Add(InputActionReference.Create(newAction));
                 Plugin.Logger.LogDebug("adding to map");
                 newAction.Enable();
                 newAction.Disable();
-                myActionMap.Add(customActions[i].actionName, boxActionRefs.Last());
+                myActionMap.Add(customActions[i].actionName, buttonActionRefs.Last());
             }
             foreach (InputAction action in boxActionAsset)
             {

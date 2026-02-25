@@ -38,9 +38,11 @@ Right below your plugin info, like this
 ### Second, the functions that will be available to you:
 ```cs
 public static void AddCustomAction(string actionName, string actionText, KeyCode keyCode) //Adds a custom action for use
+public static void AddCustomAction(string actionName, string actionText, ConfigEntry<KeyCode> entry) //Adds a custom action for use, using a ConfigEntry so the key can be refreshed in-game using a ConfigurationManager
 public static void AddButtonToUI(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch = true) //Adds a custom action to the UI matching the given list of existing buttons
 public static void AddButtonToUI(string actionName, Action functionCall) //Forcefully adds a custom button to the UI on the next redraw
 public static void RemoveButtonFromUI(string actionName) //Makes sure a custom button is not added on the next redraw of the UI
+public static void RemoveButtonFromUI(KeyCode keyCode) //Makes sure a vanilla button is not added on the next redraw of the UI
 public static void OpenButtonWindow() //Forcefully opens and draws the ButtonWindow, useful if you want it to be manually opened
 public static void CloseButtonWindow() //Forcefully closes the ButtonWindow, careful with this one. It can cause softlocks if used incorrectly
 ```
@@ -48,11 +50,19 @@ public static void CloseButtonWindow() //Forcefully closes the ButtonWindow, car
 ### Adding your actions to the game
 You need to start by using the `AddCustomAction` function first. Without that you won't be able to add them to the UI
 
-Example:
+Examples:
 ```cs
 AddCustomAction("myaction_name", "Button display text", KeyCode.B);
 ```
+or
+```cs
+AddCustomAction("myaction_name", "Button display text", myConfig.myConfigEntry); //Make sure to reference the ConfigEntry<KeyCode> itself, not the value
+```
 This will add an action using the KeyCode `B` with the name `myaction_name` and will display `Button display text`
+
+With the former being a direct KeyCode, and the latter being a ConfigEntry. Using a config entry will allow it to be changed mid-game using a configuration manager
+>[!NOTE]
+>To update keybinds mid-game the refresh button (Default - F10) needs to be  used
 
 When added to the UI, will look like this:
 
@@ -103,18 +113,20 @@ A different way is using the other method for `AddButtonToUI()`
 This adds the button to a list of actions that will be added to the UI regardless of exsisting content next time it draws.
 
 Next is the `RemoveButtonFromUI()` function. It behaves similar to the second method of adding, where it adds it to a list to be removed. Making sure it does NOT draw on the next update to the UI
+
+First one will remove any custom actions added
 ```cs
     RemoveButtonFromUI("myaction_name");
 ```
->[!NOTE]
->Removing actions from the UI currently cannot remove vanilla buttons from the list
+Second one will remove any vanilla actions added
+```cs
+    RemoveButtonFromUI(KeyCode.C);
+```
 
 The last two functions are straight forward, `OpenButtonWindow()` calls the function to open the UI using an empty list, and if you have added any using the `AddButtonToUI()` functions, they will be added.
 
 And `CloseButtonWindow()` closes the UI and clears all actions from the lists to add/remove actions
 
->[!NOTE]
->Currently does not support keybinds changing durring gameplay, the game needs to be restarted to  update
 ## Need help?
 
 You can use the following links to ask for help:

@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using UnityEngine;
 
 namespace CustomButtonHints
 {
@@ -13,11 +14,18 @@ namespace CustomButtonHints
 
         private void Awake()
         {
-            harmony = new Harmony("FNK_CustomButtonHints.Megastoresimulator");
+            harmony = new Harmony("FNK.CustomButtonHints.Megastoresimulator");
             _config = new Config(base.Config);
             Logger = base.Logger;
             harmony.PatchAll(typeof(ButtonHints));
             Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
+        }
+        private void Update()
+        {
+            if(Input.GetKeyDown(_config.kRefreshInputs.Value))
+            {
+                ButtonHints.RefreshInputActions();
+            }
         }
     }
 }

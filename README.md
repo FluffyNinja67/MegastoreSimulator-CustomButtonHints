@@ -113,6 +113,8 @@ The last two functions are straight forward, `OpenButtonWindow()` calls the func
 
 And `CloseButtonWindow()` closes the UI and clears all actions from the lists to add/remove actions
 
+>[!NOTE]
+>Currently does not support keybinds changing durring gameplay, the game needs to be restarted to  update
 ## Need help?
 
 You can use the following links to ask for help:

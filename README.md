@@ -1,3 +1,4 @@
+![Example](assets/logo.png)
 # CustomButtonHints
 
 - Adds custom buttons to the in-game ButtonWindow UI

@@ -62,7 +62,8 @@ This will add an action using the KeyCode `B` with the name `myaction_name` and 
 
 With the former being a direct KeyCode, and the latter being a ConfigEntry. Using a config entry will allow it to be changed mid-game using a configuration manager
 >[!NOTE]
->To update keybinds mid-game the refresh button (Default - F10) needs to be  used
+>Every ConfigEntry<KeyCode> added to the list will get an event handler added to it to refresh the lists for UI usage
+>In addition a keybind with a default of F10 can be used to manually refresh
 
 When added to the UI, will look like this:
 

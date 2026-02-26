@@ -35,7 +35,11 @@ namespace CustomButtonHints
         {
             customActions.Add(new(actionName, actionText, true));
             customConfigButtons.Add(entry);
+
+            entry.SettingChanged -= RefreshInputActions;
+            entry.SettingChanged += RefreshInputActions;
         }
+
         /// <summary>
         /// Adds a custom button to ButtonWindow redraws that matches given locale keys
         /// </summary>
@@ -94,7 +98,7 @@ namespace CustomButtonHints
         /// <summary>
         /// Clears all custom inputs and recollects
         /// </summary>
-        public static void RefreshInputActions()
+        public static void RefreshInputActions(object sender, EventArgs e)
         {
             refreshInputs = true;
             StartKeyMap();
@@ -217,8 +221,12 @@ namespace CustomButtonHints
                 buttonActionRefs.Clear();
                 refreshInputs = false;
             }
-            else
+            try
+            {
                 boxActionAsset.AddActionMap("Mods");
+            }
+            catch { }
+
             int buttonIndx = 0;
             int configEntryIndx = 0;
             for (int i = 0; i < customActions.Count; i++)

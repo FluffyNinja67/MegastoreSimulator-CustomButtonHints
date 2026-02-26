@@ -24,7 +24,7 @@ namespace CustomButtonHints
         {
             if(Input.GetKeyDown(_config.kRefreshInputs.Value))
             {
-                ButtonHints.RefreshInputActions();
+                ButtonHints.RefreshInputActions(null,  null);
             }
         }
     }

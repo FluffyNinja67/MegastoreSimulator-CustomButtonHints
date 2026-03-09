@@ -81,7 +81,7 @@ This line tells the mod to add the action `myaction_name` to the UI if the actio
 
 These are added by a function in the game when looking at a shelf with empty hands, using a tool like DnSpy, you can find these.
 
-This, for example, is the call adding them in `Shelf.OnMouseHoverStarted()`
+This, for example, is the call adding them in `Shelf.OnMouseHoverStarted()`.
 ```cs
 SingletonBehaviour<ButtonsWindow>.Instance.RepaintWithKeyCodes(new Dictionary<KeyCode, ValueTuple<string, Action>>
 {
@@ -112,6 +112,8 @@ A different way is using the other method for `AddButtonToUI()`
     AddButtonToUI("myaction_name", delegate { ExampleFunction(); });
 ```
 This adds the button to a list of actions that will be added to the UI regardless of exsisting content next time it draws.
+
+Either of these methods should be used in a Harmony patch that occurs before the UI draw
 
 Next is the `RemoveButtonFromUI()` function. It behaves similar to the second method of adding, where it adds it to a list to be removed. Making sure it does NOT draw on the next update to the UI
 

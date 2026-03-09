@@ -113,7 +113,7 @@ A different way is using the other method for `AddButtonToUI()`
 ```
 This adds the button to a list of actions that will be added to the UI regardless of exsisting content next time it draws.
 
-Either of these methods should be used in a Harmony patch that occurs before the UI draw
+Either of these methods should be used in a Harmony patch that occurs before the UI draw. To add a button to the UI draw above, you would add a `HarmonyPrefix` patch to the `Shelf.OnMouseHoverStarted()` function
 
 Next is the `RemoveButtonFromUI()` function. It behaves similar to the second method of adding, where it adds it to a list to be removed. Making sure it does NOT draw on the next update to the UI
 

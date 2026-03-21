@@ -37,8 +37,9 @@ Right below your plugin info, like this
 
 ### Second, the functions that will be available to you:
 ```cs
-public static void AddCustomAction(string actionName, string actionText, KeyCode keyCode) //Adds a custom action for use
-public static void AddCustomAction(string actionName, string actionText, ConfigEntry<KeyCode> entry) //Adds a custom action for use, using a ConfigEntry so the key can be refreshed in-game using a ConfigurationManager
+public static void AddCustomAction(string actionName, string actionText, KeyCode keyCode, GamepadGlyph gamepadGlyph) //Adds a custom action for use
+public static void AddCustomAction(string actionName, string actionText, ConfigEntry<KeyCode> entry, GamepadGlyph gamepadGlyph) //Adds a custom action for use, using a ConfigEntry so the key can be refreshed in-game using a ConfigurationManager
+^^^ GampadGlyph optional ^^^
 public static void AddButtonToUI(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch = true) //Adds a custom action to the UI matching the given list of existing buttons
 public static void AddButtonToUI(string actionName, Action functionCall) //Forcefully adds a custom button to the UI on the next redraw
 public static void RemoveButtonFromUI(string actionName) //Makes sure a custom button is not added on the next redraw of the UI
@@ -52,11 +53,11 @@ You need to start by using the `AddCustomAction` function first. Without that yo
 
 Examples:
 ```cs
-AddCustomAction("myaction_name", "Button display text", KeyCode.B);
+AddCustomAction("myaction_name", "Button display text", KeyCode.B, GampadGlyph, GamepadGlyph.RightStickPress);
 ```
 or
 ```cs
-AddCustomAction("myaction_name", "Button display text", myConfig.myConfigEntry); //Make sure to reference the ConfigEntry<KeyCode> itself, not the value
+AddCustomAction("myaction_name", "Button display text", myConfig.myConfigEntry, GamepadGlyph.RightStickPress); //Make sure to reference the ConfigEntry<KeyCode> itself, not the value
 ```
 This will add an action using the KeyCode `B` with the name `myaction_name` and will display `Button display text`
 

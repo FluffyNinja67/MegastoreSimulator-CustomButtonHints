@@ -21,7 +21,7 @@ namespace CustomButtonHints
         /// <param name="keyCode">KeyCode to use in the InputAction</param>
         public static void AddCustomAction(string actionName, string actionText, KeyCode keyCode)
         {
-            customActions.Add(new(actionName, actionText, false));
+            customActions.Add(new(actionName, actionText, false, false));
             customButtons.Add(keyCode);
         }
         /// <summary>
@@ -30,10 +30,41 @@ namespace CustomButtonHints
         /// </summary>
         /// <param name="actionName">Locale directory key</param>
         /// <param name="actionText">Text to display when added to the ButtonWindow</param>
-        /// <param name="keyCode">ConfigEntry for a KeyCode, NOT a KeyCode</param>
+        /// <param name="keyCode">KeyCode to use in the InputAction</param>
+        /// <param name="gamepadGlyph">Gamepad glyph code</param>
+        public static void AddCustomAction(string actionName, string actionText, KeyCode keyCode, GamepadGlyph gamepadGlyph)
+        {
+            customActions.Add(new(actionName, actionText, true, false));
+            customGamepadActions.Add(actionName, gamepadGlyph);
+            customButtons.Add(keyCode);
+        }
+        /// <summary>
+        ///      Adds texts to the games locale directory for displaying on the button window
+        ///      and generates InputActions for the KeyCodes
+        /// </summary>
+        /// <param name="actionName">Locale directory key</param>
+        /// <param name="actionText">Text to display when added to the ButtonWindow</param>
+        /// <param name="entry">ConfigEntry for a KeyCode, NOT a KeyCode</param>
         public static void AddCustomAction(string actionName, string actionText, ConfigEntry<KeyCode> entry)
         {
-            customActions.Add(new(actionName, actionText, true));
+            customActions.Add(new(actionName, actionText, false, true));
+            customConfigButtons.Add(entry);
+
+            entry.SettingChanged -= RefreshInputActions;
+            entry.SettingChanged += RefreshInputActions;
+        }
+        /// <summary>
+        ///      Adds texts to the games locale directory for displaying on the button window
+        ///      and generates InputActions for the KeyCodes
+        /// </summary>
+        /// <param name="actionName">Locale directory key</param>
+        /// <param name="actionText">Text to display when added to the ButtonWindow</param>
+        /// <param name="entry">ConfigEntry for a KeyCode, NOT a KeyCode</param>
+        /// <param name="gamepadGlyph">Gamepad glyph code</param>
+        public static void AddCustomAction(string actionName, string actionText, ConfigEntry<KeyCode> entry, GamepadGlyph gamepadGlyph)
+        {
+            customActions.Add(new(actionName, actionText, true, true));
+            customGamepadActions.Add(actionName, gamepadGlyph);
             customConfigButtons.Add(entry);
 
             entry.SettingChanged -= RefreshInputActions;
@@ -116,7 +147,8 @@ namespace CustomButtonHints
 
         private static List<(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch)> actionAdds = [];
 
-        private static List<(string actionName, string actionText, bool isConfigEntry)> customActions = [];
+        private static List<(string actionName, string actionText, bool hasGamepadGlyph, bool isConfigEntry)> customActions = [];
+        private static Dictionary<string, GamepadGlyph> customGamepadActions = [];
 
         private static List<KeyCode> customButtons = [];
         private static List<ConfigEntry<KeyCode>> customConfigButtons = [];
@@ -147,9 +179,11 @@ namespace CustomButtonHints
                         {
                             for (int j = 0; j < actionAdds[i].existingButtons.Count; j++)
                             {
-                                if (actionAdds[i].existingButtons.Contains(dictionary[j].description)) moveNext = true;
+                                moveNext = false;
+                                if (actionAdds[i].existingButtons.Contains(dictionary[j].description)) { Plugin.Logger.LogDebug("Move next to true"); moveNext = true; }
                                 if (moveNext && j < actionAdds[i].existingButtons.Count - 1)
                                 {
+                                    Plugin.Logger.LogDebug("continue");
                                     continue;
                                 }
                                 else if (moveNext)
@@ -204,6 +238,8 @@ namespace CustomButtonHints
         [HarmonyPostfix]
         private static void InitializeMapPatch(InputManager __instance)
         {
+            if (customActions.Count == 0) return;
+
             foreach (var locale in customActions)
             {
                 if (!Locale.FallbackLanguageStrings.ContainsKey(locale.actionName))
@@ -243,6 +279,14 @@ namespace CustomButtonHints
                 try { newAction = boxActionAsset.FindActionMap("Mods").AddAction($"Custom({keycode})"); }
                 catch { newAction = boxActionAsset.FindActionMap("Mods").FindAction($"Custom({keycode})"); }
                 newAction.AddBinding($"<Keyboard>/{keycode}", "", "", "KeyboardMouse");
+                if (customActions[i].hasGamepadGlyph)
+                {
+                    string glyph = customGamepadActions[customActions[i].actionName].ToString().ToLower().Replace("bumper", "shoulder");
+                    if (new List<string>() { "west", "east", "north", "south" }.Contains(glyph)) { glyph = $"button{glyph}"; }
+                    if (glyph.Contains("dpad")) { glyph = glyph.Remove(0, 4); newAction.AddBinding($"<Gamepad>/dpad/{glyph}", "", "", "Gamepad"); }
+                    else 
+                        newAction.AddBinding($"<Gamepad>/{glyph}", "", "", "Gamepad");
+                }
                 Plugin.Logger.LogDebug("setting reference");
                 buttonActionRefs.Add(InputActionReference.Create(newAction));
                 Plugin.Logger.LogDebug("adding to map");

@@ -117,7 +117,7 @@ namespace CustomButtonHints
         /// </summary>
         public static void OpenButtonWindow()
         {
-            ButtonsWindow.Instance.RepaintWithInputActions([]);
+            ButtonsWindow.Instance.RepaintWithInputActions([], useGamepad: LastInputDeviceTracker.Instance.UseGamepad);
         }
         /// <summary>
         /// Calls the ButtonWindow to close, useful if needing to draw custom buttons on functions that do not call it on their own. Will also clear all custom added buttons
@@ -261,7 +261,10 @@ namespace CustomButtonHints
             {
                 boxActionAsset.AddActionMap("Mods");
             }
-            catch { }
+            catch
+            {
+
+            }
 
             int buttonIndx = 0;
             int configEntryIndx = 0;
@@ -277,7 +280,10 @@ namespace CustomButtonHints
                     keycode = keycode.Replace("keypad", "numpad");
                 Plugin.Logger.LogDebug("Creating action");
                 try { newAction = boxActionAsset.FindActionMap("Mods").AddAction($"Custom({keycode})"); }
-                catch { newAction = boxActionAsset.FindActionMap("Mods").FindAction($"Custom({keycode})"); }
+                catch
+                {
+                    newAction = boxActionAsset.FindActionMap("Mods").FindAction($"Custom({keycode})");
+                }
                 newAction.AddBinding($"<Keyboard>/{keycode}", "", "", "KeyboardMouse");
                 if (customActions[i].hasGamepadGlyph)
                 {
@@ -303,6 +309,7 @@ namespace CustomButtonHints
         [HarmonyPostfix]
         private static void DisplayIconPatch(UIButton __instance, ref string bindingPath)
         {
+            if(InputManager.Instance.keyCodeToActionMap == null) InputManager.Instance.InitializeKeyCodeMap();
             bindingPath = bindingPath.ToLower();
             if (bindingPath.Contains("numpad"))
             {

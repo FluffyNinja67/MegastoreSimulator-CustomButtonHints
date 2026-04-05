@@ -84,7 +84,7 @@ If you set the `allRedraw` to `true`, then this only needs to be added once. Pre
 
 These are added by a function in the game when looking at a shelf with empty hands, using a tool like DnSpy, you can find these.
 
-This, for example, is the call adding them in `Shelf.OnMouseHoverStarted()`.
+This, for example, is the call adding them in `Shelf.OnMouseHoverStarted()`. Using a `Prefix` patch will set your actions to be added for this redraw
 ```cs
 SingletonBehaviour<ButtonsWindow>.Instance.RepaintWithKeyCodes(new Dictionary<KeyCode, ValueTuple<string, Action>>
 {

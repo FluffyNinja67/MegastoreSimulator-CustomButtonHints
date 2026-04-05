@@ -78,10 +78,11 @@ namespace CustomButtonHints
         /// <param name="existingButtons">Locale keys already in the list of buttons to be added</param>
         /// <param name="functionCall">Function to call when key is pressed</param>
         /// <param name="exactMatch">Decides if the locale keys need to be an exact match, or if they just need to be included in the list</param>
-        public static void AddButtonToUI(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch = true)
+        /// <param name="allRedraw">Decides if this button should be checked on ALL redraws of the ButtonWindow</param>
+        public static void AddButtonToUI(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch = false, bool allRedraw = false)
         {
             StartKeyMap();
-            actionAdds.Add(new(actionName, existingButtons, functionCall, exactMatch));
+            actionAdds.Add(new(actionName, existingButtons, functionCall, exactMatch, allRedraw));
         }
         /// <summary>
         /// Adds a custom button to the next ButtonWindow redraw regardless of content
@@ -145,7 +146,7 @@ namespace CustomButtonHints
         }
         private static bool refreshInputs = false;
 
-        private static List<(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch)> actionAdds = [];
+        private static List<(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch, bool allRedraw)> actionAdds = [];
 
         private static List<(string actionName, string actionText, bool hasGamepadGlyph, bool isConfigEntry)> customActions = [];
         private static Dictionary<string, GamepadGlyph> customGamepadActions = [];
@@ -183,7 +184,6 @@ namespace CustomButtonHints
                                 if (actionAdds[i].existingButtons.Contains(dictionary[j].description)) { Plugin.Logger.LogDebug("Move next to true"); moveNext = true; }
                                 if (moveNext && j < actionAdds[i].existingButtons.Count - 1)
                                 {
-                                    Plugin.Logger.LogDebug("continue");
                                     continue;
                                 }
                                 else if (moveNext)
@@ -231,6 +231,8 @@ namespace CustomButtonHints
                 if (buttonInfo.ContainsKey(button))
                     buttonInfo.Remove(button);
             }
+
+            actionAdds.RemoveAll(button => button.allRedraw == false);
             buttonsToAdd.Clear();
             buttonsToRemove.Clear();
         }

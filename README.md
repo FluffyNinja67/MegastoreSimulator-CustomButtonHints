@@ -40,7 +40,7 @@ Right below your plugin info, like this
 public static void AddCustomAction(string actionName, string actionText, KeyCode keyCode, GamepadGlyph gamepadGlyph) //Adds a custom action for use
 public static void AddCustomAction(string actionName, string actionText, ConfigEntry<KeyCode> entry, GamepadGlyph gamepadGlyph) //Adds a custom action for use, using a ConfigEntry so the key can be refreshed in-game using a ConfigurationManager
 ^^^ GampadGlyph optional ^^^
-public static void AddButtonToUI(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch = true) //Adds a custom action to the UI matching the given list of existing buttons
+public static void AddButtonToUI(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch, allRedraw) //Adds a custom action to the UI matching the given list of existing buttons
 public static void AddButtonToUI(string actionName, Action functionCall) //Forcefully adds a custom button to the UI on the next redraw
 public static void RemoveButtonFromUI(string actionName) //Makes sure a custom button is not added on the next redraw of the UI
 public static void RemoveButtonFromUI(KeyCode keyCode) //Makes sure a vanilla button is not added on the next redraw of the UI
@@ -76,9 +76,11 @@ When added to the UI, will look like this:
 
 Using the same example above, you can add that action to the UI using either of the `AddButtonToUI()` functions
 ```cs
-    ButtonHints.AddButtonToUI("myaction_name", ["pack", "set_price", "place_move"], delegate { ExampleFunction(); }, true);
+    ButtonHints.AddButtonToUI("myaction_name", ["pack", "set_price", "place_move"], delegate { ExampleFunction(); }, true, false);
 ```
-This line tells the mod to add the action `myaction_name` to the UI if the actions `pack` `set_price` `place_move` are in the list.
+This line tells the mod to add the action `myaction_name` to the UI if ONLY the actions `pack` `set_price` `place_move` are in the list, and only once.
+If `exactMatch` is set to `false` it will be added when all the actions are in the list, but also allows it if others are present. 
+If you set the `allRedraw` to `true`, then this only needs to be added once. Preferably in your mod startup
 
 These are added by a function in the game when looking at a shelf with empty hands, using a tool like DnSpy, you can find these.
 

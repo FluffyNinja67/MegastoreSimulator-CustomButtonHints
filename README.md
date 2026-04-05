@@ -80,7 +80,7 @@ Using the same example above, you can add that action to the UI using either of 
 ```
 This line tells the mod to add the action `myaction_name` to the UI if ONLY the actions `pack` `set_price` `place_move` are in the list, and only once.
 If `exactMatch` is set to `false` it will be added when all the actions are in the list, but also allows it if others are present. 
-If you set the `allRedraw` to `true`, then this only needs to be added once. Preferably in your mod startup
+If you set the `allRedraw` to `true`, then this only needs to be added once. Preferably in your mod startup to prevent it from being added more than once.
 
 These are added by a function in the game when looking at a shelf with empty hands, using a tool like DnSpy, you can find these.
 

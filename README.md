@@ -40,7 +40,7 @@ Right below your plugin info, like this
 public static void AddCustomAction(string actionName, string actionText, KeyCode keyCode, GamepadGlyph gamepadGlyph) //Adds a custom action for use
 public static void AddCustomAction(string actionName, string actionText, ConfigEntry<KeyCode> entry, GamepadGlyph gamepadGlyph) //Adds a custom action for use, using a ConfigEntry so the key can be refreshed in-game using a ConfigurationManager
 ^^^ GampadGlyph optional ^^^
-public static void AddButtonToUI(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch, allRedraw) //Adds a custom action to the UI matching the given list of existing buttons
+public static void AddButtonToUI(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch, bool allRedraw) //Adds a custom action to the UI matching the given list of existing buttons
 public static void AddButtonToUI(string actionName, Action functionCall) //Forcefully adds a custom button to the UI on the next redraw
 public static void RemoveButtonFromUI(string actionName) //Makes sure a custom button is not added on the next redraw of the UI
 public static void RemoveButtonFromUI(KeyCode keyCode) //Makes sure a vanilla button is not added on the next redraw of the UI

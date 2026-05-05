@@ -133,6 +133,10 @@ The last two functions are straight forward, `OpenButtonWindow()` calls the func
 
 And `CloseButtonWindow()` closes the UI and clears all actions from the lists to add/remove actions
 
+## Support me
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P4YP405)
+
+
 ## Need help?
 
 You can use the following links to ask for help:

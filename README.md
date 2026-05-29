@@ -40,7 +40,7 @@ Right below your plugin info, like this
 public static void AddCustomAction(string actionName, string actionText, KeyCode keyCode, GamepadGlyph gamepadGlyph) //Adds a custom action for use
 public static void AddCustomAction(string actionName, string actionText, ConfigEntry<KeyCode> entry, GamepadGlyph gamepadGlyph) //Adds a custom action for use, using a ConfigEntry so the key can be refreshed in-game using a ConfigurationManager
 ^^^ GampadGlyph optional ^^^
-public static void AddButtonToUI(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch, allRedraw) //Adds a custom action to the UI matching the given list of existing buttons
+public static void AddButtonToUI(string actionName, List<string> existingButtons, Action functionCall, bool exactMatch, bool allRedraw) //Adds a custom action to the UI matching the given list of existing buttons
 public static void AddButtonToUI(string actionName, Action functionCall) //Forcefully adds a custom button to the UI on the next redraw
 public static void RemoveButtonFromUI(string actionName) //Makes sure a custom button is not added on the next redraw of the UI
 public static void RemoveButtonFromUI(KeyCode keyCode) //Makes sure a vanilla button is not added on the next redraw of the UI
@@ -80,11 +80,11 @@ Using the same example above, you can add that action to the UI using either of 
 ```
 This line tells the mod to add the action `myaction_name` to the UI if ONLY the actions `pack` `set_price` `place_move` are in the list, and only once.
 If `exactMatch` is set to `false` it will be added when all the actions are in the list, but also allows it if others are present. 
-If you set the `allRedraw` to `true`, then this only needs to be added once. Preferably in your mod startup
+If you set the `allRedraw` to `true`, then this only needs to be added once. Preferably in your mod startup to prevent it from being added more than once.
 
 These are added by a function in the game when looking at a shelf with empty hands, using a tool like DnSpy, you can find these.
 
-This, for example, is the call adding them in `Shelf.OnMouseHoverStarted()`.
+This, for example, is the call adding them in `Shelf.OnMouseHoverStarted()`. Using a `Prefix` patch will set your actions to be added for this redraw
 ```cs
 SingletonBehaviour<ButtonsWindow>.Instance.RepaintWithKeyCodes(new Dictionary<KeyCode, ValueTuple<string, Action>>
 {
@@ -132,6 +132,10 @@ Second one will remove any vanilla actions added
 The last two functions are straight forward, `OpenButtonWindow()` calls the function to open the UI using an empty list, and if you have added any using the `AddButtonToUI()` functions, they will be added.
 
 And `CloseButtonWindow()` closes the UI and clears all actions from the lists to add/remove actions
+
+## Support me
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P4YP405)
+
 
 ## Need help?
 
